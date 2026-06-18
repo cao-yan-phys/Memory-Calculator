@@ -1,4 +1,4 @@
-# Vacuum Null Memory Modes
+# Vacuum Null Memory Calculator
 
 Calculators for vacuum nonlinear-null gravitational-wave memory modes.
 
