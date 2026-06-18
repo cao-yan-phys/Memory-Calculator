@@ -221,7 +221,7 @@ def precompute_memory_coeffs(
 ) -> list[UnifiedCoeff]:
     """Build coefficient table entries ``(..., Gamma_D, Gamma_S, Gamma_CM)``.
 
-    All valid azimuthal modes are always included, including ``|m|=1``.
+    All valid azimuthal modes are tabulated, including ``|m|=1``.
     """
 
     if use_cache:

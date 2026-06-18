@@ -2,26 +2,22 @@
 
 Calculators for vacuum nonlinear-null gravitational-wave memory modes.
 
-This version intentionally contains only:
+Features:
 
 - angular coupling coefficients;
 - displacement, spin, and CM memory evaluators;
 - leading-order PN helpers used for initial-offset checks;
-- a bundled `lmax=10` gamma table for the modes used by the example;
-- one example using `SEOBNRv5EHM` modes from `pyseobnr`;
-- one `SEOBNRv5EHM`-vs-`NRHybSur3dq8_CCE` comparison example.
-
-The core package has no `pyseobnr` or `gwsurrogate` dependency.  The examples do.
-No local research artifacts, private notebooks, or generated JSON files are
-included.  The only generated artifacts kept in the public tree are the small
-reference CSV/PNG files produced by the examples.
+- a bundled `lmax=10` gamma table for the modes used by the examples;
+- an example using `SEOBNRv5EHM` modes from `pyseobnr`;
+- a `SEOBNRv5EHM`-vs-`NRHybSur3dq8_CCE` comparison example;
+- reference CSV/PNG outputs produced by the examples.
 
 The bundled gamma table lives at
-`src/vacuum_memory_modes/data/gamma_coeffs_lmax10.npz`.  The public API loads
+`src/vacuum_memory_modes/data/gamma_coeffs_lmax10.npz`.  The package loads
 this file automatically for the example targets, so normal use does not rerun
-the SymPy/Wigner-3j coefficient generation.  All valid azimuthal modes,
-including `|m|=1`, are always included in the table.  If a different `lmax` or
-target is requested, the code falls back to on-the-fly generation.
+the SymPy/Wigner-3j coefficient generation.  The table covers all valid
+azimuthal modes, including `|m|=1`.  If a different `lmax` or target is
+requested, the code falls back to on-the-fly generation.
 
 ## Install
 
@@ -65,7 +61,7 @@ For CM modes the example prints both:
 This matters because `SEOBNRv5EHM` does not provide every leading PN radiative
 mode, e.g. it does not provide `(3,1)`.
 
-A reference run is included:
+Example outputs:
 
 - `examples/output/eob_circular_memory_q2_omega0.00183712.csv`
 - `examples/output/eob_circular_memory_q2_omega0.00183712.png`
@@ -91,7 +87,7 @@ To use a different oscillatory input model, replace
 with another nonprecessing positive-`m` mode dictionary.  The memory calculation
 does not depend on `SEOBNRv5EHM` specifically once those modes are supplied.
 
-The reference output is:
+Example outputs:
 
 - `examples/output/eob_cce_h20_h30_q2_x0.015.csv`
 - `examples/output/eob_cce_h20_h30_q2_x0.015.png`

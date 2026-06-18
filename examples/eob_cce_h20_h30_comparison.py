@@ -175,7 +175,7 @@ def main() -> int:
     parser.add_argument("--x-start", type=float, default=DEFAULT_X_START)
     parser.add_argument("--cce-stop", type=float, default=100.0)
     parser.add_argument("--delta-t", type=float, default=20.0, help="NRHybSur3dq8_CCE/output spacing in units of M")
-    parser.add_argument("--eob-delta-t", type=float, default=1.0, help="pyseobnr internal spacing in units of M")
+    parser.add_argument("--eob-delta-t", type=float, default=1.0, help="pyseobnr time step in units of M")
     parser.add_argument("--eob-approximant", default="SEOBNRv5EHM")
     parser.add_argument("--fit-duration", type=float, default=4000.0)
     parser.add_argument("--search-start", type=float, default=-2_500_000.0)
@@ -345,7 +345,7 @@ def main() -> int:
     print(f"x_eff = {x_eff:.12e}")
     print(f"nu = {nu:.12e}")
     print(f"NRHybSur3dq8_CCE/output delta_t = {args.delta_t:g} M")
-    print(f"{args.eob_approximant} internal delta_t = {args.eob_delta_t:g} M")
+    print(f"{args.eob_approximant} delta_t = {args.eob_delta_t:g} M")
     if eob_plateau_duration:
         print(f"{args.eob_approximant} curve held at final value for the last {eob_plateau_duration:.1f} M")
     print(f"{args.eob_approximant} positive-m modes = {sorted(eob_positive_modes)}")

@@ -162,7 +162,7 @@ def main() -> int:
             f"  {_format_complex(available):>24}  {_relative_error(numeric, available):.3e}"
         )
     print()
-    print("Note: 'LO PN available' zeros PN radiative moments that pyEOB did not return.")
+    print("Note: 'LO PN available' omits PN radiative moments that pyEOB did not return.")
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
