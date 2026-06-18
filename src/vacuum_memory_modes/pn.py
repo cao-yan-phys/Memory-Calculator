@@ -1,4 +1,4 @@
-"""Leading-order PN helpers for the public EOB example."""
+"""Leading-order PN helpers for the SEOBNRv5EHM example."""
 
 from __future__ import annotations
 

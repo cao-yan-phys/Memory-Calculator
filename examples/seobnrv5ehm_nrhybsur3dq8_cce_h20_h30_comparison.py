@@ -113,7 +113,7 @@ def _compute_memory_from_positive_modes(
 def _generate_pyseobnr_positive_modes(
     q: float,
     omega_start: float,
-    eob_delta_t: float,
+    pyseobnr_delta_t: float,
     total_mass_solar: float,
     approximant: str,
 ) -> tuple[np.ndarray, dict[tuple[int, int], np.ndarray]]:
@@ -129,7 +129,7 @@ def _generate_pyseobnr_positive_modes(
         settings={
             "EccIC": 0,
             "M": total_mass_solar,
-            "dt": eob_delta_t * total_mass_solar * MTSUN_SI,
+            "dt": pyseobnr_delta_t * total_mass_solar * MTSUN_SI,
             "lmax_nyquist": 1,
         },
     )
@@ -175,8 +175,8 @@ def main() -> int:
     parser.add_argument("--x-start", type=float, default=DEFAULT_X_START)
     parser.add_argument("--cce-stop", type=float, default=100.0)
     parser.add_argument("--delta-t", type=float, default=20.0, help="NRHybSur3dq8_CCE/output spacing in units of M")
-    parser.add_argument("--eob-delta-t", type=float, default=1.0, help="pyseobnr time step in units of M")
-    parser.add_argument("--eob-approximant", default="SEOBNRv5EHM")
+    parser.add_argument("--pyseobnr-delta-t", type=float, default=1.0, help="pyseobnr time step in units of M")
+    parser.add_argument("--pyseobnr-approximant", default="SEOBNRv5EHM")
     parser.add_argument("--fit-duration", type=float, default=4000.0)
     parser.add_argument("--search-start", type=float, default=-2_500_000.0)
     parser.add_argument("--search-stop", type=float, default=-1_000_000.0)
@@ -209,42 +209,42 @@ def main() -> int:
         args.cce_stop,
         args.delta_t,
     )
-    omega_eob_start = _fit_initial_orbital_frequency(t_cce, h_cce[(2, 2)], args.fit_duration)
-    t_eob, eob_positive_modes = _generate_pyseobnr_positive_modes(
+    omega_pyseobnr_start = _fit_initial_orbital_frequency(t_cce, h_cce[(2, 2)], args.fit_duration)
+    t_pyseobnr, pyseobnr_positive_modes = _generate_pyseobnr_positive_modes(
         args.q,
-        omega_eob_start,
-        args.eob_delta_t,
+        omega_pyseobnr_start,
+        args.pyseobnr_delta_t,
         args.total_mass_solar,
-        args.eob_approximant,
+        args.pyseobnr_approximant,
     )
-    h20_eob, dh20_dt_eob, h30_eob = _compute_memory_from_positive_modes(
-        t_eob,
-        eob_positive_modes,
+    h20_pyseobnr, dh20_dt_pyseobnr, h30_pyseobnr = _compute_memory_from_positive_modes(
+        t_pyseobnr,
+        pyseobnr_positive_modes,
         args.lmax,
     )
 
     rel_cce = t_cce - t_cce[0]
-    rel_eob = t_eob - t_eob[0]
-    eob_plateau_duration = max(0.0, float(rel_cce[-1] - rel_eob[-1]))
-    h20_eob_on_cce = _interp_complex_with_plateau(rel_cce, rel_eob, h20_eob)
-    h30_eob_on_cce = _interp_complex_with_plateau(rel_cce, rel_eob, h30_eob)
+    rel_pyseobnr = t_pyseobnr - t_pyseobnr[0]
+    pyseobnr_plateau_duration = max(0.0, float(rel_cce[-1] - rel_pyseobnr[-1]))
+    h20_pyseobnr_on_cce = _interp_complex_with_plateau(rel_cce, rel_pyseobnr, h20_pyseobnr)
+    h30_pyseobnr_on_cce = _interp_complex_with_plateau(rel_cce, rel_pyseobnr, h30_pyseobnr)
 
     dh20_cce = h_cce[(2, 0)] - h_cce[(2, 0)][0]
     dh30_cce = h_cce[(3, 0)] - h_cce[(3, 0)][0]
-    dh20_eob = h20_eob_on_cce - h20_eob_on_cce[0]
-    dh30_eob = h30_eob_on_cce - h30_eob_on_cce[0]
+    dh20_pyseobnr = h20_pyseobnr_on_cce - h20_pyseobnr_on_cce[0]
+    dh30_pyseobnr = h30_pyseobnr_on_cce - h30_pyseobnr_on_cce[0]
     nu = symmetric_mass_ratio(args.q)
-    x0 = omega_eob_start ** (2.0 / 3.0)
-    x_eff = infer_x_eff_from_dh20(dh20_dt_eob[0], args.q)
+    x0 = omega_pyseobnr_start ** (2.0 / 3.0)
+    x_eff = infer_x_eff_from_dh20(dh20_dt_pyseobnr[0], args.q)
 
     dh20_cce_norm = dh20_cce / nu
-    dh20_eob_norm = dh20_eob / nu
+    dh20_pyseobnr_norm = dh20_pyseobnr / nu
     dh30_cce_norm = dh30_cce / nu
-    dh30_eob_norm = dh30_eob / nu
+    dh30_pyseobnr_norm = dh30_pyseobnr / nu
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    stem = f"eob_cce_h20_h30_q{args.q:g}_x{args.x_start:g}"
+    stem = f"seobnrv5ehm_nrhybsur3dq8_cce_h20_h30_q{args.q:g}_x{args.x_start:g}"
     csv_path = output_dir / f"{stem}.csv"
     png_path = output_dir / f"{stem}.png"
     plot_idx = _downsample_indices(len(rel_cce), args.max_plot_points)
@@ -267,9 +267,9 @@ def main() -> int:
         for values in zip(
             rel_cce[plot_idx],
             dh20_cce_norm[plot_idx],
-            dh20_eob_norm[plot_idx],
+            dh20_pyseobnr_norm[plot_idx],
             dh30_cce_norm[plot_idx],
-            dh30_eob_norm[plot_idx],
+            dh30_pyseobnr_norm[plot_idx],
         ):
             time_value, c20, e20, c30, e30 = values
             writer.writerow(
@@ -289,23 +289,23 @@ def main() -> int:
     import matplotlib.pyplot as plt
 
     cce_label = r"$\mathtt{NRHybSur3dq8\_CCE}$"
-    eob_label = rf"$\mathtt{{{args.eob_approximant}}}$ perturbative"
+    pyseobnr_label = rf"$\mathtt{{{args.pyseobnr_approximant}}}$ perturbative"
     y20_cce = _positive_for_log(np.real(dh20_cce_norm))
-    y20_eob = _positive_for_log(np.real(dh20_eob_norm))
+    y20_pyseobnr = _positive_for_log(np.real(dh20_pyseobnr_norm))
     y30_cce = _positive_for_log(np.imag(dh30_cce_norm))
-    y30_eob = _positive_for_log(np.imag(dh30_eob_norm))
-    y20_lim = _positive_log_limits(y20_cce, y20_eob)
-    y30_lim = _positive_log_limits(y30_cce, y30_eob)
+    y30_pyseobnr = _positive_for_log(np.imag(dh30_pyseobnr_norm))
+    y20_lim = _positive_log_limits(y20_cce, y20_pyseobnr)
+    y30_lim = _positive_log_limits(y30_cce, y30_pyseobnr)
 
     fig, axes = plt.subplots(2, 1, figsize=(9, 7), sharex=True, constrained_layout=True)
     axes[0].plot(rel_cce[plot_idx], y20_cce[plot_idx], color="black", linewidth=1.4, label=cce_label)
     axes[0].plot(
         rel_cce[plot_idx],
-        y20_eob[plot_idx],
+        y20_pyseobnr[plot_idx],
         color="red",
         linestyle="--",
         linewidth=1.3,
-        label=eob_label,
+        label=pyseobnr_label,
     )
     axes[0].set_yscale("log")
     axes[0].set_ylim(*y20_lim)
@@ -316,11 +316,11 @@ def main() -> int:
     axes[1].plot(rel_cce[plot_idx], y30_cce[plot_idx], color="black", linewidth=1.4, label=cce_label)
     axes[1].plot(
         rel_cce[plot_idx],
-        y30_eob[plot_idx],
+        y30_pyseobnr[plot_idx],
         color="red",
         linestyle="--",
         linewidth=1.3,
-        label=eob_label,
+        label=pyseobnr_label,
     )
     axes[1].set_yscale("log")
     axes[1].set_ylim(*y30_lim)
@@ -328,35 +328,35 @@ def main() -> int:
     axes[1].set_xlabel(r"$t-t_0$ [$M$]")
     axes[1].grid(True, which="both", alpha=0.25)
     fig.suptitle(
-        rf"$\mathtt{{{args.eob_approximant}}}$ vs $\mathtt{{NRHybSur3dq8\_CCE}}$, "
+        rf"$\mathtt{{{args.pyseobnr_approximant}}}$ vs $\mathtt{{NRHybSur3dq8\_CCE}}$, "
         rf"$q={args.q:g}$, $x_0={x0:.6g}$, "
         rf"$x_{{\rm eff}}={x_eff:.6g}$"
     )
     fig.savefig(png_path, dpi=180)
     plt.close(fig)
 
-    print(f"{args.eob_approximant} vs NRHybSur3dq8_CCE h20/h30 comparison")
+    print(f"{args.pyseobnr_approximant} vs NRHybSur3dq8_CCE h20/h30 comparison")
     print(f"q = {args.q:g}")
     print(f"target x_start = {args.x_start:.12e}")
     print(f"target Omega = {omega_target:.12e}")
     print(f"NRHybSur3dq8_CCE t0 = {t_cce[0]:.3f} M, final time = {t_cce[-1]:.3f} M")
-    print(f"NRHybSur3dq8_CCE-fit Omega_start used for {args.eob_approximant} = {omega_eob_start:.12e}")
+    print(f"NRHybSur3dq8_CCE-fit Omega_start used for {args.pyseobnr_approximant} = {omega_pyseobnr_start:.12e}")
     print(f"x0 = {x0:.12e}")
     print(f"x_eff = {x_eff:.12e}")
     print(f"nu = {nu:.12e}")
     print(f"NRHybSur3dq8_CCE/output delta_t = {args.delta_t:g} M")
-    print(f"{args.eob_approximant} delta_t = {args.eob_delta_t:g} M")
-    if eob_plateau_duration:
-        print(f"{args.eob_approximant} curve held at final value for the last {eob_plateau_duration:.1f} M")
-    print(f"{args.eob_approximant} positive-m modes = {sorted(eob_positive_modes)}")
+    print(f"{args.pyseobnr_approximant} delta_t = {args.pyseobnr_delta_t:g} M")
+    if pyseobnr_plateau_duration:
+        print(f"{args.pyseobnr_approximant} curve held at final value for the last {pyseobnr_plateau_duration:.1f} M")
+    print(f"{args.pyseobnr_approximant} positive-m modes = {sorted(pyseobnr_positive_modes)}")
     print(f"final NRHybSur3dq8_CCE Delta h20 = {_format_complex(dh20_cce[-1])}")
-    print(f"final {args.eob_approximant} Delta h20 = {_format_complex(dh20_eob[-1])}")
+    print(f"final {args.pyseobnr_approximant} Delta h20 = {_format_complex(dh20_pyseobnr[-1])}")
     print(f"final NRHybSur3dq8_CCE Delta h30 = {_format_complex(dh30_cce[-1])}")
-    print(f"final {args.eob_approximant} Delta h30 = {_format_complex(dh30_eob[-1])}")
+    print(f"final {args.pyseobnr_approximant} Delta h30 = {_format_complex(dh30_pyseobnr[-1])}")
     print(f"final NRHybSur3dq8_CCE Delta h20 / nu = {_format_complex(dh20_cce_norm[-1])}")
-    print(f"final {args.eob_approximant} Delta h20 / nu = {_format_complex(dh20_eob_norm[-1])}")
+    print(f"final {args.pyseobnr_approximant} Delta h20 / nu = {_format_complex(dh20_pyseobnr_norm[-1])}")
     print(f"final NRHybSur3dq8_CCE Delta h30 / nu = {_format_complex(dh30_cce_norm[-1])}")
-    print(f"final {args.eob_approximant} Delta h30 / nu = {_format_complex(dh30_eob_norm[-1])}")
+    print(f"final {args.pyseobnr_approximant} Delta h30 / nu = {_format_complex(dh30_pyseobnr_norm[-1])}")
     print(f"Saved CSV: {csv_path}")
     print(f"Saved plot: {png_path}")
     return 0

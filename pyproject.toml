@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "vacuum-memory-modes"
 version = "0.1.0"
-description = "Minimal vacuum nonlinear-null gravitational-wave memory mode calculator"
+description = "Perturbative calculators for vacuum nonlinear-null gravitational-wave memory modes"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -15,8 +15,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-eob = ["pyseobnr", "matplotlib"]
-cce = ["pyseobnr", "gwsurrogate", "matplotlib"]
+pyseobnr = ["pyseobnr", "matplotlib"]
+nrhybsur3dq8-cce = ["pyseobnr", "gwsurrogate", "matplotlib"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

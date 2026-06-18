@@ -1,4 +1,4 @@
-"""Compute h20, h30, and CM memory from a circular nonprecessing EOB event."""
+"""Compute h20, h30, and CM memory from a circular nonprecessing SEOBNRv5EHM event."""
 
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def main() -> int:
     try:
         from pyseobnr.generate_waveform import generate_modes_opt
     except ImportError as exc:
-        raise SystemExit("This example requires pyseobnr. Install the optional EOB dependency.") from exc
+        raise SystemExit("This example requires pyseobnr.") from exc
 
     t, raw_modes = generate_modes_opt(
         args.q,
@@ -94,8 +94,8 @@ def main() -> int:
             "lmax_nyquist": 1,
         },
     )
-    eob_positive_modes = {tuple(map(int, key.split(","))): value for key, value in raw_modes.items()}
-    oscillatory_modes = complete_nonprecessing_modes(eob_positive_modes)
+    pyseobnr_positive_modes = {tuple(map(int, key.split(","))): value for key, value in raw_modes.items()}
+    oscillatory_modes = complete_nonprecessing_modes(pyseobnr_positive_modes)
     oscillatory_hdot = differentiate_modes(t, oscillatory_modes)
 
     targets = [(2, 0), (3, 0), (3, 1), (3, 3), (5, 1), (5, 3), (5, 5)]
@@ -121,10 +121,10 @@ def main() -> int:
     h30_num = primary[(3, 0)]["h_spin_mode"][0]
     h30_lo = h30_spin_lo(args.q, x_eff)
 
-    print("EOB circular nonprecessing memory demo")
+    print("SEOBNRv5EHM circular nonprecessing memory demo")
     print(f"q = {args.q:g}, omega_start = {args.omega_start:g}")
     print(f"samples = {len(t)}, time range = [{t[0]:.3f}, {t[-1]:.3f}] M")
-    print(f"pyEOB positive-m modes = {sorted(eob_positive_modes)}")
+    print(f"pyseobnr positive-m modes = {sorted(pyseobnr_positive_modes)}")
     print()
     print("Effective 0PN initial x from dot h20")
     print(f"Re(dot h20)_0 = {np.real(dh20_dt[0]):.12e}")
@@ -162,11 +162,11 @@ def main() -> int:
             f"  {_format_complex(available):>24}  {_relative_error(numeric, available):.3e}"
         )
     print()
-    print("Note: 'LO PN available' omits PN radiative moments that pyEOB did not return.")
+    print("Note: 'LO PN available' omits PN radiative moments that pyseobnr did not return.")
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = output_dir / f"eob_circular_memory_q{args.q:g}_omega{args.omega_start:g}.csv"
+    csv_path = output_dir / f"seobnrv5ehm_circular_memory_q{args.q:g}_omega{args.omega_start:g}.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.writer(stream)
         writer.writerow(
@@ -269,7 +269,7 @@ def main() -> int:
                 ax.set_xlabel(r"$t-t_0$ [$M$]")
         flat_axes[0].legend(loc="best", frameon=False)
         fig.suptitle(f"SEOBNRv5EHM memory-mode waveform check, q={args.q:g}")
-        png_path = output_dir / f"eob_circular_memory_q{args.q:g}_omega{args.omega_start:g}.png"
+        png_path = output_dir / f"seobnrv5ehm_circular_memory_q{args.q:g}_omega{args.omega_start:g}.png"
         fig.savefig(png_path, dpi=180)
         plt.close(fig)
         print(f"Saved comparison plot: {png_path}")

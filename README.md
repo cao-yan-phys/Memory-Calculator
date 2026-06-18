@@ -1,16 +1,13 @@
 # Vacuum Null Memory Calculator
 
-Calculators for vacuum nonlinear-null gravitational-wave memory modes.
+Perturbative calculators for vacuum nonlinear-null gravitational-wave memory modes.
 
-Features:
+Includes:
 
 - angular coupling coefficients;
 - displacement, spin, and CM memory evaluators;
 - leading-order PN helpers used for initial-offset checks;
-- a bundled `lmax=10` gamma table for the modes used by the examples;
-- an example using `SEOBNRv5EHM` modes from `pyseobnr`;
-- a `SEOBNRv5EHM`-vs-`NRHybSur3dq8_CCE` comparison example;
-- reference CSV/PNG outputs produced by the examples.
+- a bundled `lmax=10` gamma table for common memory-mode targets.
 
 The bundled gamma table lives at
 `src/vacuum_memory_modes/data/gamma_coeffs_lmax10.npz`.  The package loads
@@ -37,7 +34,7 @@ The waveform models used by the examples are:
 ## Example
 
 ```bash
-python examples/eob_circular_memory_demo.py
+python examples/seobnrv5ehm_circular_memory_demo.py
 ```
 
 The example generates a nonprecessing circular `SEOBNRv5EHM` event, computes
@@ -56,20 +53,20 @@ are black solid curves and the effective-0PN waveforms are red dashed curves.
 For CM modes the example prints both:
 
 - the full Nichols leading-PN value; and
-- the leading-PN value truncated to the modes actually returned by pyEOB.
+- the leading-PN value truncated to the modes actually returned by `pyseobnr`.
 
 This matters because `SEOBNRv5EHM` does not provide every leading PN radiative
 mode, e.g. it does not provide `(3,1)`.
 
 Example outputs:
 
-- `examples/output/eob_circular_memory_q2_omega0.00183712.csv`
-- `examples/output/eob_circular_memory_q2_omega0.00183712.png`
+- `examples/output/seobnrv5ehm_circular_memory_q2_omega0.00183712.csv`
+- `examples/output/seobnrv5ehm_circular_memory_q2_omega0.00183712.png`
 
 ## SEOBNRv5EHM-Vs-NRHybSur3dq8_CCE Example
 
 ```bash
-python examples/eob_cce_h20_h30_comparison.py
+python examples/seobnrv5ehm_nrhybsur3dq8_cce_h20_h30_comparison.py
 ```
 
 This example loads `NRHybSur3dq8_CCE`, finds the `NRHybSur3dq8_CCE` time where
@@ -89,5 +86,5 @@ does not depend on `SEOBNRv5EHM` specifically once those modes are supplied.
 
 Example outputs:
 
-- `examples/output/eob_cce_h20_h30_q2_x0.015.csv`
-- `examples/output/eob_cce_h20_h30_q2_x0.015.png`
+- `examples/output/seobnrv5ehm_nrhybsur3dq8_cce_h20_h30_q2_x0.015.csv`
+- `examples/output/seobnrv5ehm_nrhybsur3dq8_cce_h20_h30_q2_x0.015.png`
