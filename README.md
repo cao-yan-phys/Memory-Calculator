@@ -1,8 +1,8 @@
 # Vacuum Null Memory Modes
 
-Routines for vacuum nonlinear-null gravitational-wave memory modes.
+Calculators for vacuum nonlinear-null gravitational-wave memory modes.
 
-This public version intentionally contains only:
+This version intentionally contains only:
 
 - angular coupling coefficients;
 - displacement, spin, and CM memory evaluators;
