@@ -9,7 +9,7 @@ Includes:
 - leading-order PN helpers for nonprecessing quasicircular compact binaries;
 - a bundled `lmax=10` gamma table for common memory-mode targets.
 
-The bundled gamma table lives at `src/vacuum_memory_modes/data/gamma_coeffs_lmax10.npz`. The package loads this file automatically for the example targets, so normal use does not rerun the SymPy/Wigner-3j coefficient generation. The table covers all valid azimuthal modes, including $|m|=1$. If a different `lmax` or target is requested, the code falls back to on-the-fly generation.
+The bundled gamma table lives at `src/vacuum_memory_modes/data/gamma_coeffs_lmax10.npz`. The package loads this file automatically for the example targets, so normal use does not rerun the SymPy/Wigner-3j coefficient generation. If a different `lmax` or target is requested, the code falls back to on-the-fly generation.
 
 ## Install
 
@@ -55,7 +55,7 @@ python examples/seobnrv5ehm_nrhybsur3dq8_cce_h20_h30_comparison.py
 
 This example loads `NRHybSur3dq8_CCE`, finds the `NRHybSur3dq8_CCE` time where $\Omega_{\rm orb}=0.015^{3/2}$, fits the initial `NRHybSur3dq8_CCE` $(2,2)$ phase to get the `SEOBNRv5EHM` `omega_start`, and then compares $h(t)-h(t_0)$ for the `NRHybSur3dq8_CCE` $(2,0)$ and $(3,0)$ modes against `SEOBNRv5EHM` perturbative $h_{20}$ and $h_{30}$.
 
-To use a different oscillatory input model, replace `_generate_pyseobnr_positive_modes` or call `_compute_memory_from_positive_modes` with another nonprecessing positive-$m$ mode dictionary. The memory calculation does not depend on `SEOBNRv5EHM` specifically once those modes are supplied.
+To use a different oscillatory input model, replace `_generate_pyseobnr_positive_modes` or call `_compute_memory_from_positive_modes` with another nonprecessing positive-$m$ mode dictionary.
 
 Example outputs:
 
