@@ -16,6 +16,7 @@ from .core import (
     parity_sign,
     precompute_memory_coeffs,
 )
+from .few_emri import FewEmriConfig, compute_few_emri_memory_modes
 from .pn import (
     cm_strain_lo_modes,
     delta_mass_fraction,
@@ -30,10 +31,12 @@ from .pn import (
 __all__ = [
     "B_coefficient",
     "C_coefficient",
+    "FewEmriConfig",
     "cm_strain_lo_modes",
     "complete_nonprecessing_modes",
     "compute_memory_modes",
     "compute_vacuum_null_memory_mode",
+    "compute_few_emri_memory_modes",
     "cumulative_integral",
     "delta_mass_fraction",
     "differentiate_modes",
