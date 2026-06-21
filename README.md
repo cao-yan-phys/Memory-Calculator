@@ -85,7 +85,7 @@ $$
 It follows that
 
 $$
-h_{l,m}(t,R)=\int_{-\infty}^{t-R}du\,\frac{4}{t-u}\int_{\mathbf{n}} \left(\frac{dE_\text{null}}{dud\Omega_\mathbf{n}}\right)_u F_l(v)Y_{lm}^*(\mathbf{n}),
+h_{l,m}(t,R)=\int_{-\infty}^{t-R}du \frac{4}{t-u}\int_{\mathbf{n}} \left(\frac{dE_\text{null}}{dud\Omega_\mathbf{n}}\right)_u F_l(v)Y_{lm}^*(\mathbf{n}),
 $$
 
 with $v=\frac{R}{t-u}\in(0,1]$ [since $u=t-r<t-R$], and
@@ -111,7 +111,7 @@ $$
 such that
 
 $$
-h_{l,m}(U)=\int_{-\infty}^U du\,\mathcal{A}_l\left(\frac{1}{1+U/R-u/R}\right)\,\frac{d h_{l,m}^\infty(u)}{du}.
+h_{l,m}(U)=\int_{-\infty}^U du \mathcal{A}_l\left(\frac{1}{1+U/R-u/R}\right) \frac{d h_{l,m}^\infty(u)}{du}.
 $$
 
 For given $R$ and $t\to \infty$, $v\to \frac{R}{t}\equiv V$, the finite-radius mode has the late-time asymptotic behavior (assuming that $\frac{d h_{l,m}^\infty(u>u_*)}{du}=0$)
@@ -145,7 +145,7 @@ $$
 while $\frac{dx(u)}{du}=\frac{64}{5}\frac{\nu}{M}x^5$ gives $x(u)=\left[\frac{5M}{256\nu(u_c-u)}\right]^{1/4}$. We thus obtain
 
 $$
-h_{2,0}(U)=\mathcal{B}\left(\rho\right)\,h_{2,0}^\infty(U),\quad h_{2,0}^\infty(U)=\frac{2}{21}\sqrt{30\pi}\frac{\nu M}{R}x(U).
+h_{2,0}(U)=\mathcal{B}\left(\rho\right)h_{2,0}^\infty(U),\quad h_{2,0}^\infty(U)=\frac{2}{21}\sqrt{30\pi}\frac{\nu M}{R}x(U).
 $$
 
 with $\rho=\frac{R}{u_c-U}$, and
